@@ -9,17 +9,17 @@ export const useProfileStore = create((set) => ({
   fetchMyProfile: async () => {
     set({ loading: true, error: null });
     try {
-      const { data } = await usersApi.get('/api/users/me');
+      const { data } = await usersApi.get('/api/users/profile');
       set({ profile: data, loading: false });
     } catch (err) {
       set({ error: 'Error al cargar perfil', loading: false });
     }
   },
 
-  updateProfile: async (name, bio, avatarUrl) => {
+  updateProfile: async (profileData) => {
     set({ loading: true, error: null });
     try {
-      const { data } = await usersApi.put('/api/users/me', { name, bio, avatarUrl });
+      const { data } = await usersApi.put('/api/users/profile', profileData);
       set({ profile: data, loading: false });
       return true;
     } catch (err) {

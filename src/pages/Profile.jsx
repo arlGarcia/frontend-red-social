@@ -8,7 +8,10 @@ export const Profile = () => {
   const { user } = useAuthStore();
   
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
+    alias: '',
+    birthDate: '',
     bio: '',
     avatarUrl: ''
   });
@@ -22,7 +25,10 @@ export const Profile = () => {
   useEffect(() => {
     if (profile) {
       setFormData({
-        name: profile.name || '',
+        firstName: profile.firstName || '',
+        lastName: profile.lastName || '',
+        alias: profile.alias || '',
+        birthDate: profile.birthDate || '',
         bio: profile.bio || '',
         avatarUrl: profile.avatarUrl || ''
       });
@@ -33,7 +39,7 @@ export const Profile = () => {
     e.preventDefault();
     setMessage('');
     
-    const success = await updateProfile(formData.name, formData.bio, formData.avatarUrl);
+    const success = await updateProfile(formData);
     if (success) {
       setMessage('Perfil actualizado exitosamente.');
       setTimeout(() => setMessage(''), 3000);
@@ -56,7 +62,7 @@ export const Profile = () => {
             </div>
             <div>
               <h2>Configurar Perfil</h2>
-              <p style={{ margin: 0 }}>{user?.email}</p>
+              <p style={{ margin: 0 }}>{user?.email} — <small>@{formData.alias}</small></p>
             </div>
           </div>
 
@@ -64,23 +70,57 @@ export const Profile = () => {
           {message && <div className="alert" style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', color: 'var(--success)', borderColor: 'rgba(16, 185, 129, 0.2)' }}>{message}</div>}
 
           <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="name">Nombre visible</label>
-              <input
-                id="name"
-                type="text"
-                required
-                minLength={3}
-                value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
-              />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="form-group">
+                <label htmlFor="firstName">Nombre</label>
+                <input
+                  id="firstName"
+                  type="text"
+                  required
+                  value={formData.firstName}
+                  onChange={(e) => setFormData({...formData, firstName: e.target.value})}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="lastName">Apellido</label>
+                <input
+                  id="lastName"
+                  type="text"
+                  required
+                  value={formData.lastName}
+                  onChange={(e) => setFormData({...formData, lastName: e.target.value})}
+                />
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="form-group">
+                <label htmlFor="alias">Alias (Único)</label>
+                <input
+                  id="alias"
+                  type="text"
+                  required
+                  value={formData.alias}
+                  onChange={(e) => setFormData({...formData, alias: e.target.value})}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="birthDate">Fecha de Nacimiento</label>
+                <input
+                  id="birthDate"
+                  type="date"
+                  required
+                  value={formData.birthDate}
+                  onChange={(e) => setFormData({...formData, birthDate: e.target.value})}
+                />
+              </div>
             </div>
             
             <div className="form-group">
               <label htmlFor="bio">Biografía</label>
               <textarea
                 id="bio"
-                rows="4"
+                rows="3"
                 maxLength={500}
                 value={formData.bio}
                 onChange={(e) => setFormData({...formData, bio: e.target.value})}
@@ -89,7 +129,7 @@ export const Profile = () => {
             </div>
             
             <div className="form-group" style={{ marginBottom: '2rem' }}>
-              <label htmlFor="avatarUrl">URL de Avatar (opcional)</label>
+              <label htmlFor="avatarUrl">URL de Avatar</label>
               <input
                 id="avatarUrl"
                 type="url"
